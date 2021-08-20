@@ -1,5 +1,5 @@
 [package]
-name = "tree-sitter-dockerfile"
+name = "tree-sitter-dockerfile-query"
 description = "dockerfile grammar for the tree-sitter parsing library"
 version = "0.0.1"
 keywords = ["incremental", "parsing", "dockerfile"]
@@ -20,7 +20,7 @@ include = [
 path = "bindings/rust/lib.rs"
 
 [dependencies]
-tree-sitter = "0.17"
+tree-sitter = "0.19"
 
 [build-dependencies]
 cc = "1.0"

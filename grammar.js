@@ -4,7 +4,27 @@ module.exports = grammar({
   extras: ($) => [/\s+/, $.line_continuation],
 
   rules: {
-    source_file: ($) => repeat(seq(choice($._instruction, $.comment), "\n")),
+    source_file: ($) =>
+      repeat(
+        seq(
+          choice(
+            $._instruction,
+            $.comment,
+            $.shisho_metavariable,
+            $.shisho_ellipsis_metavariable,
+            $.shisho_ellipsis
+          ),
+          "\n"
+        )
+      ),
+
+    // query syntax for shisho
+    shisho_metavariable: ($) => seq(":[", $.shisho_metavariable_name, "]"),
+    shisho_ellipsis: ($) => ":[...]",
+    shisho_ellipsis_metavariable: ($) =>
+      seq(":[", "...", $.shisho_metavariable_name, "]"),
+
+    shisho_metavariable_name: ($) => /[A-Z_][A-Z_0-9]*/,
 
     _instruction: ($) =>
       choice(
@@ -34,7 +54,12 @@ module.exports = grammar({
         alias(/[fF][rR][oO][mM]/, "FROM"),
         optional($.param),
         $.image_spec,
-        optional(seq(alias(/[aA][sS]/, "AS"), field("as", $.image_alias)))
+        optional(
+          seq(
+            alias(/[aA][sS]/, "AS"),
+            field("as", choice($.image_alias, $.shisho_metavariable))
+          )
+        )
       ),
 
     run_instruction: ($) =>
@@ -50,27 +75,52 @@ module.exports = grammar({
       ),
 
     label_instruction: ($) =>
-      seq(alias(/[lL][aA][bB][eE][lL]/, "LABEL"), repeat1($.label_pair)),
+      seq(
+        alias(/[lL][aA][bB][eE][lL]/, "LABEL"),
+        repeat1(
+          choice(
+            $.label_pair,
+            $.shisho_ellipsis,
+            $.shisho_ellipsis_metavariable
+          )
+        )
+      ),
 
     expose_instruction: ($) =>
       seq(
         alias(/[eE][xX][pP][oO][sS][eE]/, "EXPOSE"),
-        repeat1(choice($.expose_port, $.expansion))
+        repeat1(
+          choice(
+            $.expose_port,
+            $.shisho_ellipsis,
+            $.shisho_ellipsis_metavariable,
+            $.expansion
+          )
+        )
       ),
 
     env_instruction: ($) =>
       seq(
         alias(/[eE][nN][vV]/, "ENV"),
-        choice(repeat1($.env_pair), alias($._spaced_env_pair, $.env_pair))
+        choice(
+          repeat1(
+            choice(
+              $.env_pair,
+              $.shisho_ellipsis,
+              $.shisho_ellipsis_metavariable
+            )
+          ),
+          alias($._spaced_env_pair, $.env_pair)
+        )
       ),
 
     add_instruction: ($) =>
       seq(
         alias(/[aA][dD][dD]/, "ADD"),
         optional($.param),
-        $.path,
+        choice($.path, $.shisho_metavariable),
         $._non_newline_whitespace,
-        $.path
+        choice($.path, $.shisho_metavariable)
       ),
 
     copy_instruction: ($) =>
@@ -93,18 +143,42 @@ module.exports = grammar({
         alias(/[vV][oO][lL][uU][mM][eE]/, "VOLUME"),
         choice(
           $.string_array,
-          seq($.path, repeat(seq($._non_newline_whitespace, $.path)))
+          seq(
+            choice($.path, $.shisho_ellipsis, $.shisho_ellipsis_metavariable),
+            repeat(
+              seq(
+                $._non_newline_whitespace,
+                choice(
+                  $.path,
+                  $.shisho_ellipsis,
+                  $.shisho_ellipsis_metavariable
+                )
+              )
+            )
+          )
         )
       ),
 
     user_instruction: ($) =>
       seq(
         alias(/[uU][sS][eE][rR]/, "USER"),
-        field("user", alias($._user_name_or_group, $.unquoted_string)),
+        field(
+          "user",
+          choice(
+            alias($._user_name_or_group, $.unquoted_string),
+            $.shisho_metavariable
+          )
+        ),
         optional(
           seq(
             token.immediate(":"),
-            field("group", alias($._user_name_or_group, $.unquoted_string))
+            field(
+              "group",
+              choice(
+                alias($._user_name_or_group, $.unquoted_string),
+                $.shisho_metavariable
+              )
+            )
           )
         )
       ),
@@ -118,17 +192,33 @@ module.exports = grammar({
     arg_instruction: ($) =>
       seq(
         alias(/[aA][rR][gG]/, "ARG"),
-        field("name", alias(/[a-zA-Z0-9_]+/, $.unquoted_string)),
+        field(
+          "name",
+          choice(
+            alias(/[a-zA-Z0-9_]+/, $.unquoted_string),
+            $.shisho_metavariable
+          )
+        ),
         optional(
           seq(
             token.immediate("="),
-            field("default", choice($.double_quoted_string, $.unquoted_string))
+            field(
+              "default",
+              choice(
+                $.shisho_metavariable,
+                $.double_quoted_string,
+                $.unquoted_string
+              )
+            )
           )
         )
       ),
 
     onbuild_instruction: ($) =>
-      seq(alias(/[oO][nN][bB][uU][iI][lL][dD]/, "ONBUILD"), $._instruction),
+      seq(
+        alias(/[oO][nN][bB][uU][iI][lL][dD]/, "ONBUILD"),
+        choice($._instruction, $.shisho_metavariable)
+      ),
 
     stopsignal_instruction: ($) =>
       seq(
@@ -136,12 +226,34 @@ module.exports = grammar({
         $._stopsignal_value
       ),
 
-    _stopsignal_value: ($) => repeat1(choice(/[A-Z0-9]+/, $.expansion)),
+    _stopsignal_value: ($) =>
+      repeat1(
+        choice(
+          /[A-Z0-9]+/,
+          $.expansion,
+          $.shisho_metavariable,
+          $.shisho_ellipsis_metavariable,
+          $.shisho_ellipsis
+        )
+      ),
 
     healthcheck_instruction: ($) =>
       seq(
         alias(/[hH][eE][aA][lL][tT][hH][cC][hH][eE][cC][kK]/, "HEALTHCHECK"),
-        choice("NONE", seq(repeat($.param), $.cmd_instruction))
+        choice(
+          "NONE",
+          seq(
+            repeat(
+              choice(
+                $.param,
+                $.shisho_metavariable,
+                $.shisho_ellipsis_metavariable,
+                $.shisho_ellipsis
+              )
+            ),
+            $.cmd_instruction
+          )
+        )
       ),
 
     shell_instruction: ($) =>
@@ -178,33 +290,64 @@ module.exports = grammar({
 
     env_pair: ($) =>
       seq(
-        field("name", $._env_key),
+        field("name", choice($._env_key, $.shisho_metavariable)),
         token.immediate("="),
-        field("value", choice($.double_quoted_string, $.unquoted_string))
+        field(
+          "value",
+          choice(
+            $.shisho_metavariable,
+            $.double_quoted_string,
+            $.unquoted_string
+          )
+        )
       ),
 
     _spaced_env_pair: ($) =>
       seq(
-        field("name", $._env_key),
+        field("name", choice($._env_key, $.shisho_metavariable)),
         token.immediate(/\s+/),
-        field("value", choice($.double_quoted_string, $.unquoted_string))
+        field(
+          "value",
+          choice(
+            $.shisho_metavariable,
+            $.double_quoted_string,
+            $.unquoted_string
+          )
+        )
       ),
 
     _env_key: ($) =>
       alias(/[a-zA-Z][a-zA-Z0-9_]*[a-zA-Z0-9]/, $.unquoted_string),
 
-    expose_port: ($) => seq(/\d+/, optional(choice("/tcp", "/udp"))),
+    expose_port: ($) =>
+      choice(
+        $.shisho_metavariable,
+        seq(/\d+/, optional(choice("/tcp", "/udp")))
+      ),
 
     label_pair: ($) =>
       seq(
-        field("key", alias(/[-a-zA-Z0-9\._]+/, $.unquoted_string)),
+        field(
+          "key",
+          choice(
+            $.shisho_metavariable,
+            alias(/[-a-zA-Z0-9\._]+/, $.unquoted_string)
+          )
+        ),
         token.immediate("="),
-        field("value", choice($.double_quoted_string, $.unquoted_string))
+        field(
+          "value",
+          choice(
+            $.shisho_metavariable,
+            $.double_quoted_string,
+            $.unquoted_string
+          )
+        )
       ),
 
     image_spec: ($) =>
       seq(
-        field("name", $.image_name),
+        field("name", choice($.image_name, $.shisho_metavariable)),
         seq(
           field("tag", optional($.image_tag)),
           field("digest", optional($.image_digest))
@@ -216,22 +359,30 @@ module.exports = grammar({
     image_tag: ($) =>
       seq(
         token.immediate(":"),
-        repeat1(choice(token.immediate(/[^@\s\$]+/), $.expansion))
+        choice($.image_tag_value, $.shisho_metavariable)
       ),
+
+    image_tag_value: ($) =>
+      repeat1(choice(token.immediate(/[^\[\]@\s\$]+/), $.expansion)),
 
     image_digest: ($) =>
       seq(
         token.immediate("@"),
-        repeat1(choice(token.immediate(/[a-zA-Z0-9:]+/), $.expansion))
+        choice($.image_digest_value, $.shisho_metavariable)
       ),
+    image_digest_value: ($) =>
+      repeat1(choice(token.immediate(/[a-zA-Z0-9:]+/), $.expansion)),
 
     param: ($) =>
       seq(
         "--",
-        field("name", token.immediate(/[a-z][-a-z]*/)),
+        field("name", choice($.param_name, $.shisho_metavariable)),
         token.immediate("="),
-        field("value", token.immediate(/[^\s]+/))
+        field("value", choice($.param_value, $.shisho_metavariable))
       ),
+
+    param_name: ($) => token.immediate(/[a-z][-a-z]*/),
+    param_value: ($) => token.immediate(/[^\s]+/),
 
     image_alias: ($) => repeat1(choice(/[-a-zA-Z0-9_]+/, $.expansion)),
 
@@ -239,16 +390,48 @@ module.exports = grammar({
       seq(
         "[",
         optional(
-          seq($.double_quoted_string, repeat(seq(",", $.double_quoted_string)))
+          seq(
+            choice(
+              $.double_quoted_string,
+              $.shisho_metavariable,
+              $.shisho_ellipsis_metavariable,
+              $.shisho_ellipsis
+            ),
+            repeat(
+              seq(
+                ",",
+                choice(
+                  $.double_quoted_string,
+                  $.shisho_metavariable,
+                  $.shisho_ellipsis_metavariable,
+                  $.shisho_ellipsis
+                )
+              )
+            )
+          )
         ),
         "]"
       ),
 
     shell_command: ($) =>
       seq(
-        $.shell_fragment,
+        choice(
+          $.shell_fragment,
+          $.shisho_ellipsis,
+          $.shisho_metavariable,
+          $.shisho_ellipsis_metavariable
+        ),
         repeat(
-          seq($.line_continuation, repeat($._comment_line), $.shell_fragment)
+          seq(
+            $.line_continuation,
+            repeat($._comment_line),
+            choice(
+              $.shell_fragment,
+              $.shisho_ellipsis,
+              $.shisho_metavariable,
+              $.shisho_ellipsis_metavariable
+            )
+          )
         )
       ),
 

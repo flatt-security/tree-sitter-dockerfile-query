@@ -16,6 +16,18 @@
               {
                 "type": "SYMBOL",
                 "name": "comment"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_ellipsis_metavariable"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_ellipsis"
               }
             ]
           },
@@ -25,6 +37,52 @@
           }
         ]
       }
+    },
+    "shisho_metavariable": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":["
+        },
+        {
+          "type": "SYMBOL",
+          "name": "shisho_metavariable_name"
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "shisho_ellipsis": {
+      "type": "STRING",
+      "value": ":[...]"
+    },
+    "shisho_ellipsis_metavariable": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": ":["
+        },
+        {
+          "type": "STRING",
+          "value": "..."
+        },
+        {
+          "type": "SYMBOL",
+          "name": "shisho_metavariable_name"
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "shisho_metavariable_name": {
+      "type": "PATTERN",
+      "value": "[A-Z_][A-Z_0-9]*"
     },
     "_instruction": {
       "type": "CHOICE",
@@ -154,8 +212,17 @@
                   "type": "FIELD",
                   "name": "as",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "image_alias"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "image_alias"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "shisho_metavariable"
+                      }
+                    ]
                   }
                 }
               ]
@@ -236,8 +303,21 @@
         {
           "type": "REPEAT1",
           "content": {
-            "type": "SYMBOL",
-            "name": "label_pair"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "label_pair"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_ellipsis"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_ellipsis_metavariable"
+              }
+            ]
           }
         }
       ]
@@ -262,6 +342,14 @@
               {
                 "type": "SYMBOL",
                 "name": "expose_port"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_ellipsis"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_ellipsis_metavariable"
               },
               {
                 "type": "SYMBOL",
@@ -290,8 +378,21 @@
             {
               "type": "REPEAT1",
               "content": {
-                "type": "SYMBOL",
-                "name": "env_pair"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "env_pair"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "shisho_ellipsis"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "shisho_ellipsis_metavariable"
+                  }
+                ]
               }
             },
             {
@@ -332,16 +433,34 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "path"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "path"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
           "name": "_non_newline_whitespace"
         },
         {
-          "type": "SYMBOL",
-          "name": "path"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "path"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         }
       ]
     },
@@ -433,8 +552,21 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "path"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "path"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "shisho_ellipsis"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "shisho_ellipsis_metavariable"
+                    }
+                  ]
                 },
                 {
                   "type": "REPEAT",
@@ -446,8 +578,21 @@
                         "name": "_non_newline_whitespace"
                       },
                       {
-                        "type": "SYMBOL",
-                        "name": "path"
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "path"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "shisho_ellipsis"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "shisho_ellipsis_metavariable"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -474,13 +619,22 @@
           "type": "FIELD",
           "name": "user",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_user_name_or_group"
-            },
-            "named": true,
-            "value": "unquoted_string"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_user_name_or_group"
+                },
+                "named": true,
+                "value": "unquoted_string"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              }
+            ]
           }
         },
         {
@@ -500,13 +654,22 @@
                   "type": "FIELD",
                   "name": "group",
                   "content": {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_user_name_or_group"
-                    },
-                    "named": true,
-                    "value": "unquoted_string"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_user_name_or_group"
+                        },
+                        "named": true,
+                        "value": "unquoted_string"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "shisho_metavariable"
+                      }
+                    ]
                   }
                 }
               ]
@@ -568,13 +731,22 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "PATTERN",
-              "value": "[a-zA-Z0-9_]+"
-            },
-            "named": true,
-            "value": "unquoted_string"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[a-zA-Z0-9_]+"
+                },
+                "named": true,
+                "value": "unquoted_string"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              }
+            ]
           }
         },
         {
@@ -596,6 +768,10 @@
                   "content": {
                     "type": "CHOICE",
                     "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "shisho_metavariable"
+                      },
                       {
                         "type": "SYMBOL",
                         "name": "double_quoted_string"
@@ -629,8 +805,17 @@
           "value": "ONBUILD"
         },
         {
-          "type": "SYMBOL",
-          "name": "_instruction"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_instruction"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         }
       ]
     },
@@ -664,6 +849,18 @@
           {
             "type": "SYMBOL",
             "name": "expansion"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "shisho_metavariable"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "shisho_ellipsis_metavariable"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "shisho_ellipsis"
           }
         ]
       }
@@ -693,8 +890,25 @@
                 {
                   "type": "REPEAT",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "param"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "param"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "shisho_metavariable"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "shisho_ellipsis_metavariable"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "shisho_ellipsis"
+                      }
+                    ]
                   }
                 },
                 {
@@ -846,8 +1060,17 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "_env_key"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_env_key"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              }
+            ]
           }
         },
         {
@@ -863,6 +1086,10 @@
           "content": {
             "type": "CHOICE",
             "members": [
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              },
               {
                 "type": "SYMBOL",
                 "name": "double_quoted_string"
@@ -883,8 +1110,17 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "_env_key"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_env_key"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              }
+            ]
           }
         },
         {
@@ -900,6 +1136,10 @@
           "content": {
             "type": "CHOICE",
             "members": [
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              },
               {
                 "type": "SYMBOL",
                 "name": "double_quoted_string"
@@ -923,30 +1163,39 @@
       "value": "unquoted_string"
     },
     "expose_port": {
-      "type": "SEQ",
+      "type": "CHOICE",
       "members": [
         {
-          "type": "PATTERN",
-          "value": "\\d+"
+          "type": "SYMBOL",
+          "name": "shisho_metavariable"
         },
         {
-          "type": "CHOICE",
+          "type": "SEQ",
           "members": [
+            {
+              "type": "PATTERN",
+              "value": "\\d+"
+            },
             {
               "type": "CHOICE",
               "members": [
                 {
-                  "type": "STRING",
-                  "value": "/tcp"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "/tcp"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "/udp"
+                    }
+                  ]
                 },
                 {
-                  "type": "STRING",
-                  "value": "/udp"
+                  "type": "BLANK"
                 }
               ]
-            },
-            {
-              "type": "BLANK"
             }
           ]
         }
@@ -959,13 +1208,22 @@
           "type": "FIELD",
           "name": "key",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "PATTERN",
-              "value": "[-a-zA-Z0-9\\._]+"
-            },
-            "named": true,
-            "value": "unquoted_string"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[-a-zA-Z0-9\\._]+"
+                },
+                "named": true,
+                "value": "unquoted_string"
+              }
+            ]
           }
         },
         {
@@ -981,6 +1239,10 @@
           "content": {
             "type": "CHOICE",
             "members": [
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              },
               {
                 "type": "SYMBOL",
                 "name": "double_quoted_string"
@@ -1001,8 +1263,17 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "image_name"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "image_name"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              }
+            ]
           }
         },
         {
@@ -1071,25 +1342,38 @@
           }
         },
         {
-          "type": "REPEAT1",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[^@\\s\\$]+"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "expansion"
-              }
-            ]
-          }
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "image_tag_value"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         }
       ]
+    },
+    "image_tag_value": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "IMMEDIATE_TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "[^\\[\\]@\\s\\$]+"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "expansion"
+          }
+        ]
+      }
     },
     "image_digest": {
       "type": "SEQ",
@@ -1102,25 +1386,38 @@
           }
         },
         {
-          "type": "REPEAT1",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[a-zA-Z0-9:]+"
-                }
-              },
-              {
-                "type": "SYMBOL",
-                "name": "expansion"
-              }
-            ]
-          }
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "image_digest_value"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         }
       ]
+    },
+    "image_digest_value": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "IMMEDIATE_TOKEN",
+            "content": {
+              "type": "PATTERN",
+              "value": "[a-zA-Z0-9:]+"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "expansion"
+          }
+        ]
+      }
     },
     "param": {
       "type": "SEQ",
@@ -1133,11 +1430,17 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "[a-z][-a-z]*"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "param_name"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              }
+            ]
           }
         },
         {
@@ -1151,14 +1454,34 @@
           "type": "FIELD",
           "name": "value",
           "content": {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "PATTERN",
-              "value": "[^\\s]+"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "param_value"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "shisho_metavariable"
+              }
+            ]
           }
         }
       ]
+    },
+    "param_name": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[a-z][-a-z]*"
+      }
+    },
+    "param_value": {
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "PATTERN",
+        "value": "[^\\s]+"
+      }
     },
     "image_alias": {
       "type": "REPEAT1",
@@ -1190,8 +1513,25 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SYMBOL",
-                  "name": "double_quoted_string"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "double_quoted_string"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "shisho_metavariable"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "shisho_ellipsis_metavariable"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "shisho_ellipsis"
+                    }
+                  ]
                 },
                 {
                   "type": "REPEAT",
@@ -1203,8 +1543,25 @@
                         "value": ","
                       },
                       {
-                        "type": "SYMBOL",
-                        "name": "double_quoted_string"
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "double_quoted_string"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "shisho_metavariable"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "shisho_ellipsis_metavariable"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "shisho_ellipsis"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -1226,8 +1583,25 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "shell_fragment"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "shell_fragment"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_ellipsis"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_ellipsis_metavariable"
+            }
+          ]
         },
         {
           "type": "REPEAT",
@@ -1246,8 +1620,25 @@
                 }
               },
               {
-                "type": "SYMBOL",
-                "name": "shell_fragment"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "shell_fragment"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "shisho_ellipsis"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "shisho_metavariable"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "shisho_ellipsis_metavariable"
+                  }
+                ]
               }
             ]
           }
