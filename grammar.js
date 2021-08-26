@@ -52,7 +52,7 @@ module.exports = grammar({
     from_instruction: ($) =>
       seq(
         alias(/[fF][rR][oO][mM]/, "FROM"),
-        optional($.param),
+        optional(choice($.shisho_ellipsis_metavariable, $.param)),
         $.image_spec,
         optional(
           seq(
@@ -127,9 +127,9 @@ module.exports = grammar({
       seq(
         alias(/[cC][oO][pP][yY]/, "COPY"),
         optional($.param),
-        $.path,
+        choice($.path, $.shisho_metavariable),
         $._non_newline_whitespace,
-        $.path
+        choice($.path, $.shisho_metavariable)
       ),
 
     entrypoint_instruction: ($) =>
@@ -187,7 +187,10 @@ module.exports = grammar({
       repeat1(choice(/[a-z][-a-z0-9_]*/, $.expansion)),
 
     workdir_instruction: ($) =>
-      seq(alias(/[wW][oO][rR][kK][dD][iI][rR]/, "WORKDIR"), $.path),
+      seq(
+        alias(/[wW][oO][rR][kK][dD][iI][rR]/, "WORKDIR"),
+        choice($.path, $.shisho_metavariable)
+      ),
 
     arg_instruction: ($) =>
       seq(
@@ -282,7 +285,6 @@ module.exports = grammar({
         ),
         repeat(choice(/[^\s\$]+/, $.expansion))
       ),
-
     expansion: ($) =>
       seq("$", choice($.variable, seq("{", alias(/[^\}]+/, $.variable), "}"))),
 
@@ -416,20 +418,20 @@ module.exports = grammar({
     shell_command: ($) =>
       seq(
         choice(
-          $.shell_fragment,
           $.shisho_ellipsis,
           $.shisho_metavariable,
-          $.shisho_ellipsis_metavariable
+          $.shisho_ellipsis_metavariable,
+          $.shell_fragment
         ),
         repeat(
           seq(
             $.line_continuation,
             repeat($._comment_line),
             choice(
-              $.shell_fragment,
               $.shisho_ellipsis,
               $.shisho_metavariable,
-              $.shisho_ellipsis_metavariable
+              $.shisho_ellipsis_metavariable,
+              $.shell_fragment
             )
           )
         )

@@ -99,6 +99,10 @@
         {
           "type": "path",
           "named": true
+        },
+        {
+          "type": "shisho_metavariable",
+          "named": true
         }
       ]
     }
@@ -293,6 +297,10 @@
         },
         {
           "type": "param",
+          "named": true
+        },
+        {
+          "type": "shisho_ellipsis_metavariable",
           "named": true
         }
       ]
@@ -1020,6 +1028,10 @@
       "types": [
         {
           "type": "path",
+          "named": true
+        },
+        {
+          "type": "shisho_metavariable",
           "named": true
         }
       ]

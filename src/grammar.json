@@ -181,8 +181,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "param"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "shisho_ellipsis_metavariable"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "param"
+                }
+              ]
             },
             {
               "type": "BLANK"
@@ -489,16 +498,34 @@
           ]
         },
         {
-          "type": "SYMBOL",
-          "name": "path"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "path"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         },
         {
           "type": "SYMBOL",
           "name": "_non_newline_whitespace"
         },
         {
-          "type": "SYMBOL",
-          "name": "path"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "path"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         }
       ]
     },
@@ -710,8 +737,17 @@
           "value": "WORKDIR"
         },
         {
-          "type": "SYMBOL",
-          "name": "path"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "path"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shisho_metavariable"
+            }
+          ]
         }
       ]
     },
@@ -1587,10 +1623,6 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "shell_fragment"
-            },
-            {
-              "type": "SYMBOL",
               "name": "shisho_ellipsis"
             },
             {
@@ -1600,6 +1632,10 @@
             {
               "type": "SYMBOL",
               "name": "shisho_ellipsis_metavariable"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "shell_fragment"
             }
           ]
         },
@@ -1624,10 +1660,6 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "shell_fragment"
-                  },
-                  {
-                    "type": "SYMBOL",
                     "name": "shisho_ellipsis"
                   },
                   {
@@ -1637,6 +1669,10 @@
                   {
                     "type": "SYMBOL",
                     "name": "shisho_ellipsis_metavariable"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "shell_fragment"
                   }
                 ]
               }
