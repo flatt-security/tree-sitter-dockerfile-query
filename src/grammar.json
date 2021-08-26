@@ -1619,25 +1619,8 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "shisho_ellipsis"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "shisho_metavariable"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "shisho_ellipsis_metavariable"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "shell_fragment"
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "shell_fragment"
         },
         {
           "type": "REPEAT",
@@ -1656,25 +1639,8 @@
                 }
               },
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "shisho_ellipsis"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "shisho_metavariable"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "shisho_ellipsis_metavariable"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "shell_fragment"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "shell_fragment"
               }
             ]
           }

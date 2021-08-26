@@ -719,18 +719,6 @@
         {
           "type": "shell_fragment",
           "named": true
-        },
-        {
-          "type": "shisho_ellipsis",
-          "named": true
-        },
-        {
-          "type": "shisho_ellipsis_metavariable",
-          "named": true
-        },
-        {
-          "type": "shisho_metavariable",
-          "named": true
         }
       ]
     }

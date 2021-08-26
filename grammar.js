@@ -417,23 +417,9 @@ module.exports = grammar({
 
     shell_command: ($) =>
       seq(
-        choice(
-          $.shisho_ellipsis,
-          $.shisho_metavariable,
-          $.shisho_ellipsis_metavariable,
-          $.shell_fragment
-        ),
+        $.shell_fragment,
         repeat(
-          seq(
-            $.line_continuation,
-            repeat($._comment_line),
-            choice(
-              $.shisho_ellipsis,
-              $.shisho_metavariable,
-              $.shisho_ellipsis_metavariable,
-              $.shell_fragment
-            )
-          )
+          seq($.line_continuation, repeat($._comment_line), $.shell_fragment)
         )
       ),
 
